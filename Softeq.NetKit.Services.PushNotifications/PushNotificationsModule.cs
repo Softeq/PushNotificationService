@@ -19,8 +19,8 @@ namespace Softeq.NetKit.Services.PushNotifications
                     config["Notifications:Push:NotificationHub:ConnectionString"],
                     config["Notifications:Push:NotificationHub:HubName"]);
             }).SingleInstance();
-            builder.RegisterType<AzureNotificationHubSender>().As<IPushNotificationSubscriber>();
-            builder.RegisterType<AzureNotificationHubSubscriber>().As<IPushNotificationSender>();
+            builder.RegisterType<AzureNotificationHubSender>().As<IPushNotificationSender>();
+            builder.RegisterType<AzureNotificationHubSubscriber>().As<IPushNotificationSubscriber>();
         }
     }
 }
