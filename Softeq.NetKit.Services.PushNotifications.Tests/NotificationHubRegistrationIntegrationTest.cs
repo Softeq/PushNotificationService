@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Softeq.NetKit.Services.PushNotifications.Client;
 using Softeq.NetKit.Services.PushNotifications.Models;
-using Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.Article;
+using Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.Comment;
 using Xunit;
 
 namespace Softeq.NetKit.Services.PushNotifications.Tests
@@ -64,7 +64,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
         {
             await ShouldCreateRegistration();
             
-            await _hubSender.SendAsync(new ArticleAddedPush(), _testUserId);
+            await _hubSender.SendAsync(new CommentLikedPush(), _testUserId);
             
             await ShouldUnsubscribeUserFromPush();
         }

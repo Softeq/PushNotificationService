@@ -6,7 +6,6 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
     public enum PushNotificationType
     {
         CommentLiked = 1,
-        ArticleLiked = 2,
-        ChatMessage = 3
+        PostLiked = 2
     }
 }

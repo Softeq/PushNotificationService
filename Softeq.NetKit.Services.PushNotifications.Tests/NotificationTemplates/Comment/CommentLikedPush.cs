@@ -9,11 +9,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.C
 {
     public class CommentLikedPush : PushNotificationMessage
     {
-        [JsonProperty("articleId")]
-        public Guid ArticleId { get; set; }
-
-        [JsonProperty("newsHeader")]
-        public string NewsHeader { get; set; }
+        [JsonProperty("commentId")]
+        public Guid CommentId { get; set; }
 
         public CommentLikedPush()
         {
