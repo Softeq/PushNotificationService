@@ -1,10 +1,10 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.Collections.Generic;
 using Microsoft.Azure.NotificationHubs;
 using Softeq.NetKit.Services.PushNotifications.Extensions;
 using Softeq.NetKit.Services.PushNotifications.Models;
+using System.Collections.Generic;
 
 namespace Softeq.NetKit.Services.PushNotifications.Helpers
 {
@@ -12,8 +12,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Helpers
     {
         public static DeviceRegistration Convert(RegistrationDescription description)
         {
-            var platform = description?.GetPlatform();
-            if (platform == null)
+            if (description == null || !description.TryGetPlatform(out var platform))
             {
                 return null;
             }
@@ -22,7 +21,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Helpers
             {
                 Tags = new List<string>(description.Tags),
                 RegistrationId = description.RegistrationId,
-                Platform = platform.Value
+                Platform = platform
             };
         }
     }

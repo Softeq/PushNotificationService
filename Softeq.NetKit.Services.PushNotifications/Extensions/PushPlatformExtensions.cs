@@ -8,16 +8,19 @@ namespace Softeq.NetKit.Services.PushNotifications.Extensions
 {
     internal static class PushPlatformExtensions
     {
-        public static PushPlatformEnum? GetPlatform(this RegistrationDescription registration)
+        public static bool TryGetPlatform(this RegistrationDescription registration, out PushPlatformEnum platform)
         {
             switch (registration)
             {
                 case AppleRegistrationDescription a:
-                    return PushPlatformEnum.iOS;
+                    platform = PushPlatformEnum.iOS;
+                    return true;
                 case FcmRegistrationDescription f:
-                    return PushPlatformEnum.Android;
+                    platform = PushPlatformEnum.Android;
+                    return true;
                 default:
-                    return null;
+                    platform = PushPlatformEnum.Android;
+                    return false;
             }
         }
     }
