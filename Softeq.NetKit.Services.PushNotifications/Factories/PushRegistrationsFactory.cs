@@ -10,8 +10,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
 {
     internal static class PushRegistrationsFactory
     {
-        private const string iOSTemplate = "{\"aps\":{\"alert\":{\"title\":\"$(title)\",\"body\":\"$(body)\"},\"sound\":\"$(sound)\",\"badge\":$(badge),\"type\":$(type)},\"data\":\"$(data)\"}";
-        private const string androidTemplate = "{\"notification\":{\"title\":\"$(title)\",\"body\":\"$(body)\",\"sound\":\"$(sound)\"},\"data\":{\"type\":$(type),\"payload\":\"$(data)\"}}";
+        private const string iOSTemplate = "{\"aps\":{\"alert\":{\"title\":\"$(title)\",\"body\":\"$(body)\"},\"sound\":\"$(sound)\",\"badge\":\"#(badge)\",\"type\":\"#(type)\"},\"data\":\"$(data)\"}";
+        private const string androidTemplate = "{\"notification\":{\"title\":\"$(title)\",\"body\":\"$(body)\",\"sound\":\"$(sound)\"},\"data\":{\"type\":\"#(type)\",\"payload\":\"$(data)\"}}";
 
         public static RegistrationDescription CreateTemplateRegistration(PushSubscriptionRequest subscription)
         {
