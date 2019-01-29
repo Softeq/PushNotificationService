@@ -9,6 +9,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Models
     {
         public PushPlatformEnum Platform { get; set; }
         public string RegistrationId { get; set; }
+        public string DeviceToken { get; set; }
+        public string GcmRegistrationId { get; set; }
         public IList<string> Tags { get; set; }
     }
 }
