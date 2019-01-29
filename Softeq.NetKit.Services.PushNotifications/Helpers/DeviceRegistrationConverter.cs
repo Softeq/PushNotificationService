@@ -28,12 +28,12 @@ namespace Softeq.NetKit.Services.PushNotifications.Helpers
             {
                 case PushPlatformEnum.iOS:
                 {
-                    deviceRegistration.DeviceToken = ((AppleTemplateRegistrationDescription) description).DeviceToken;
+                    deviceRegistration.PnsHandle = ((AppleTemplateRegistrationDescription) description).DeviceToken;
                     break;
                 }
                 case PushPlatformEnum.Android:
                 {
-                    deviceRegistration.GcmRegistrationId = ((GcmRegistrationDescription)description).GcmRegistrationId;
+                    deviceRegistration.PnsHandle = ((GcmRegistrationDescription)description).GcmRegistrationId;
                     break;
                 }
                 default:
