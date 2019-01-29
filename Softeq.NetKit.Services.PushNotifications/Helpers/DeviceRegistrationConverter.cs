@@ -17,12 +17,32 @@ namespace Softeq.NetKit.Services.PushNotifications.Helpers
                 return null;
             }
 
-            return new DeviceRegistration
+            var deviceRegistration = new DeviceRegistration
             {
                 Tags = new List<string>(description.Tags),
                 RegistrationId = description.RegistrationId,
                 Platform = platform
             };
+
+            switch (platform)
+            {
+                case PushPlatformEnum.iOS:
+                {
+                    deviceRegistration.PnsHandle = ((AppleTemplateRegistrationDescription)description).DeviceToken;
+                    break;
+                }
+                case PushPlatformEnum.Android:
+                {
+                    deviceRegistration.PnsHandle = ((GcmTemplateRegistrationDescription)description).GcmRegistrationId;
+                    break;
+                }
+                default:
+                {
+                    return null;
+                }
+            }
+
+            return deviceRegistration;
         }
     }
 }

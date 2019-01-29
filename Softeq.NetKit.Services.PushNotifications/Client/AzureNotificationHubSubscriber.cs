@@ -29,7 +29,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         {
             Ensure.That(request, nameof(request)).IsNotNull();
 
-            var registrations = await GetRegistrations(request.DeviceHandle, false);
+            var registrations = await GetRegistrationsForDevice(request.DeviceHandle);
             await DeleteRegistrations(registrations);
             await CreateRegistrationAsync(request);
         }
@@ -37,7 +37,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public async Task UnsubscribeDeviceAsync(string deviceHandle)
         {
             Ensure.That(deviceHandle, nameof(deviceHandle)).IsNotNullOrWhiteSpace();
-            var registrations = await GetRegistrations(deviceHandle, false);
+            var registrations = await GetRegistrationsForDevice(deviceHandle);
             await DeleteRegistrations(registrations);
         }
 
@@ -45,7 +45,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         {
             Ensure.That(tag, nameof(tag)).IsNotNullOrWhiteSpace();
 
-            var registrations = await GetRegistrations(tag, true);
+            var registrations = await GetRegistrationsForTag(tag);
             try
             {
                 foreach (var registration in registrations)
@@ -62,7 +62,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public async Task<IEnumerable<DeviceRegistration>> GetRegistrationsByTagAsync(string tag)
         {
             Ensure.That(tag, nameof(tag)).IsNotNullOrWhiteSpace();
-            var registrations = await GetRegistrations(tag, true);
+            var registrations = await GetRegistrationsForTag(tag);
             return registrations.Select(DeviceRegistrationConverter.Convert).Where(x => x != null).ToList();
         }
 
@@ -95,7 +95,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
             }
         }
 
-        private async Task<IEnumerable<RegistrationDescription>> GetRegistrations(string searchValue, bool byTag)
+        private async Task<IEnumerable<RegistrationDescription>> GetRegistrationsForTag(string tagValue)
         {
             try
             {
@@ -105,9 +105,31 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
 
                 do
                 {
-                    var registrations = byTag
-                        ? await _hub.GetRegistrationsByTagAsync(searchValue, continuationToken, pageSize)
-                        : await _hub.GetRegistrationsByChannelAsync(searchValue, continuationToken, pageSize);
+                    var registrations = await _hub.GetRegistrationsByTagAsync(tagValue, continuationToken, pageSize);
+                    allRegistrationDescriptions.AddRange(registrations);
+                    continuationToken = registrations.ContinuationToken;
+
+                } while (!string.IsNullOrWhiteSpace(continuationToken));
+
+                return allRegistrationDescriptions;
+            }
+            catch (MessagingException ex)
+            {
+                throw new PushNotificationException("Something went wrong while retrieving device registration list", ex);
+            }
+        }
+
+        private async Task<IEnumerable<RegistrationDescription>> GetRegistrationsForDevice(string pnsValue)
+        {
+            try
+            {
+                const int pageSize = 100;
+                var allRegistrationDescriptions = new List<RegistrationDescription>();
+                string continuationToken = string.Empty;
+
+                do
+                {
+                    var registrations = await _hub.GetRegistrationsByChannelAsync(pnsValue, continuationToken, pageSize);
                     allRegistrationDescriptions.AddRange(registrations);
                     continuationToken = registrations.ContinuationToken;
 

@@ -9,6 +9,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Models
     {
         public PushPlatformEnum Platform { get; set; }
         public string RegistrationId { get; set; }
+        public string PnsHandle { get; set; }
         public IList<string> Tags { get; set; }
     }
 }

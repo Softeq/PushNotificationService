@@ -58,7 +58,19 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
             Assert.NotNull(registrations);
             Assert.Empty(registrations);
         }
-        
+
+        [Fact]
+        public async Task ShouldGetRegistrationByTag()
+        {
+            await ShouldCreateRegistration();
+
+            var existingRegistrations = await _hubSubscriber.GetRegistrationsByTagAsync(_testUserId);
+
+            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
+            Assert.NotNull(registrations);
+            Assert.True(registrations.Count() == existingRegistrations.Count());
+        }
+
         [Fact]
         public async Task ShouldSendToSingleUserAsync()
         {
