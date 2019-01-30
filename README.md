@@ -4,7 +4,7 @@ Softeq.NetKit.Services.PushNotifications component simplifies the process of bri
 1. Android 
 2. iOS
 
-# Geting Started
+# Getting Started
 
 ## Install 
 1. Check-out master branch from repository;
