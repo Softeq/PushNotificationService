@@ -7,6 +7,7 @@ using Softeq.NetKit.Services.PushNotifications.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Softeq.NetKit.Services.PushNotifications.Exception;
 
 namespace Softeq.NetKit.Services.PushNotifications.Factories
 {
@@ -16,26 +17,67 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
         {
             var properties = new Dictionary<string, string>
             {
-                {"body", message.Body},
-                {"title", message.Title},
                 {"sound", message.Sound},
                 {"badge", message.Badge.ToString()},
                 {"type", message.NotificationType.ToString()},
                 {"data", message.GetData()}
             };
 
-            AddLocalizationKeyValues(message, properties);
+            var notificationType = GetNotificationMessageType(message);
+
+            switch (notificationType)
+            {
+                case NotificationType.Native:
+                {
+                    AddNativeParameters(message, properties);
+                    break;
+                }
+                case NotificationType.Localized:
+                {
+                    AddLocalizationKeyValues(message, properties);
+                    break;
+                }
+            }
 
             return properties;
+        }
+
+        private static NotificationType GetNotificationMessageType(PushNotificationMessage message)
+        {
+            if (!string.IsNullOrWhiteSpace(message.BodyLocalizationKey) &&
+                !string.IsNullOrWhiteSpace(message.TitleLocalizationKey) &&
+                !string.IsNullOrWhiteSpace(message.Body) &&
+                !string.IsNullOrWhiteSpace(message.Title)
+                )
+            {
+                throw new ValidationException("Push notification has mixed type.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(message.Body) &&
+                !string.IsNullOrWhiteSpace(message.Title))
+            {
+                return NotificationType.Native;
+            }
+
+            if (!string.IsNullOrWhiteSpace(message.BodyLocalizationKey) &&
+                !string.IsNullOrWhiteSpace(message.TitleLocalizationKey))
+            {
+                return NotificationType.Localized;
+            }
+
+            throw new ValidationException("Push notification type is not recognized.");
+        }
+
+        private static void AddNativeParameters(PushNotificationMessage message, Dictionary<string, string> properties)
+        {
+            properties.Add("body", message.Body);
+            properties.Add("title", message.Title);
         }
 
         private static void AddLocalizationKeyValues(PushNotificationMessage message, Dictionary<string, string> properties)
         {
             properties.Add("body_loc_key", message.BodyLocalizationKey);
             properties.Add("title_loc_key", message.TitleLocalizationKey);
-
-            //TODO: investigate localization arguments propagation
-            return;
 
             var bodyArgValues = new List<string>();
             var titleArgValues = new List<string>();
@@ -59,7 +101,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
                     }
                 }
             }
-
+            
             var bodyArgsContent = JsonConvert.SerializeObject(bodyArgValues);
             var titleArgsContent = JsonConvert.SerializeObject(titleArgValues);
 
