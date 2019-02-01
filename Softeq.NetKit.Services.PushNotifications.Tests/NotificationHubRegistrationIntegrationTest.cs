@@ -103,6 +103,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
             var ex = await Assert.ThrowsAsync<ValidationException>(async () => await _hubSender.SendAsync(pushNotificationMessage, _testUserId));
 
             Assert.IsType(typeof(ValidationException), ex);
+
+            await ShouldUnsubscribeUserFromPush();
         }
     }
 }
