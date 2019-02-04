@@ -15,10 +15,4 @@ namespace Softeq.NetKit.Services.PushNotifications.Attributes
             Target = target;
         }
     }
-
-    public enum LocalizationTarget
-    {
-        Title,
-        Body
-    }
 }

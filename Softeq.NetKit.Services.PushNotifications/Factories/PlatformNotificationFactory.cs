@@ -47,8 +47,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
             if (!string.IsNullOrWhiteSpace(message.BodyLocalizationKey) &&
                 !string.IsNullOrWhiteSpace(message.TitleLocalizationKey) &&
                 !string.IsNullOrWhiteSpace(message.Body) &&
-                !string.IsNullOrWhiteSpace(message.Title)
-                )
+                !string.IsNullOrWhiteSpace(message.Title))
             {
                 throw new ValidationException("Push notification has mixed type.");
             }
