@@ -101,6 +101,43 @@ If an additional properties are required to be sent with push, create custom pus
     }
 ```
 
+### Localization
+
+Project supports client-side message localization by providing platform-specific localization keys:
+For iOS - ```loc-key``` \ ```loc-args``` and ```title-loc-key``` \ ```title-loc-args``` 
+For Android - ```body_loc_key``` \ ```body_loc_args``` and ```title_loc_key``` \ ```title_loc_args``` 
+
+To enable client-size localization for a particular message, ```BodyLocalizationKey``` and ```TitleLocalizationKey``` properties need to be initialized with valid resource names, available in client:
+
+```csharp
+    public class ArticleLikedPush : PushNotificationMessage
+    {
+        private static string _bodyLocalizationKey = "article_Liked_body";
+        private static string _titleLocalizationKey = "article_Liked_title";
+
+        public ArticleLikedPush()
+        {
+            BodyLocalizationKey = _bodyLocalizationKey;
+            TitleLocalizationKey = _titleLocalizationKey;
+            NotificationType = (int) PushNotificationType.ArticleLiked;
+        }
+
+        [JsonProperty("articleId")]
+        public Guid ArticleId { get; set; }
+
+        [JsonProperty("newsHeader")]
+        public string NewsHeader { get; set; }
+
+        [JsonProperty("userIdWhoLikedArticle")]
+        public string UserIdWhoLikedArticle { get; set; }
+
+        [JsonIgnore]
+        [LocalizationParameter(LocalizationTarget.Title, 1)]
+        [LocalizationParameter(LocalizationTarget.Body, 1)]
+        public string UserNameWhoLikedArticle { get; set; }
+    }
+```
+
 ## Use
 
 Inject ```IPushNotificationSubscriber``` into your service to subscribe or unsubscribe user device from push notifications.
