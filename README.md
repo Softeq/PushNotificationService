@@ -104,8 +104,8 @@ If an additional properties are required to be sent with push, create custom pus
 ### Localization
 
 Project supports client-side message localization by providing platform-specific localization keys:
-For iOS - ```loc-key``` \ ```loc-args``` and ```title-loc-key``` \ ```title-loc-args``` 
-For Android - ```body_loc_key``` \ ```body_loc_args``` and ```title_loc_key``` \ ```title_loc_args``` 
+1. For iOS - ```loc-key``` \ ```loc-args``` and ```title-loc-key``` \ ```title-loc-args``` 
+2. For Android - ```body_loc_key``` \ ```body_loc_args``` and ```title_loc_key``` \ ```title_loc_args``` 
 
 To enable client-size localization for a particular message, ```BodyLocalizationKey``` and ```TitleLocalizationKey``` properties need to be initialized with valid resource names, available in client:
 
