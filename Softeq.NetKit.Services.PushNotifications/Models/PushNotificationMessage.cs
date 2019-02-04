@@ -14,7 +14,13 @@ namespace Softeq.NetKit.Services.PushNotifications.Models
         public string Title { get; set; } = string.Empty;
 
         [JsonIgnore]
+        public string TitleLocalizationKey { get; set; } = string.Empty;
+
+        [JsonIgnore]
         public string Body { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        public string BodyLocalizationKey { get; set; } = string.Empty;
 
         [JsonIgnore]
         public int Badge { get; set; } = 0;
