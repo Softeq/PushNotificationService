@@ -48,8 +48,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
 
         private static void AddNativeParameters(PushNotificationMessage message, Dictionary<string, string> properties)
         {
-            properties.Add("body", message.Body);
-            properties.Add("title", message.Title);
+            properties.Add("body", message.FormatBody());
+            properties.Add("title", message.FormatTitle());
         }
 
         private static void AddLocalizationKeyValues(PushNotificationMessage message, Dictionary<string, string> properties)
