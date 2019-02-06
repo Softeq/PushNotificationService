@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.2-alpha2</Version>
+    <Version>1.1.0</Version>
     <Description></Description>
     <Authors>Softeq Development Corp.</Authors>
     <Company>Softeq Development Corp.</Company>
@@ -11,6 +11,7 @@
     <Product>Softeq.PushNotificationService</Product>
     <PackageProjectUrl>https://github.com/Softeq/PushNotificationService</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Softeq/PushNotificationService/blob/master/LICENSE</PackageLicenseUrl>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

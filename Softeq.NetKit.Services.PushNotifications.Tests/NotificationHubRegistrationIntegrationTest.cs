@@ -1,12 +1,12 @@
 // Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System.Linq;
-using System.Threading.Tasks;
 using Softeq.NetKit.Services.PushNotifications.Client;
 using Softeq.NetKit.Services.PushNotifications.Exception;
 using Softeq.NetKit.Services.PushNotifications.Models;
-using Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.Comment;
+using Softeq.NetKit.Services.PushNotifications.Tests.Messages;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Softeq.NetKit.Services.PushNotifications.Tests
@@ -28,32 +28,35 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
             _hubSubscriber = new AzureNotificationHubSubscriber(new AzureNotificationHubConfiguration(_connectionString, _hubName));
             _nativeHub = Microsoft.Azure.NotificationHubs.NotificationHubClient.CreateClientFromConnectionString(_connectionString, _hubName);
         }
-        
+
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task ShouldCreateRegistration()
         {
-            await _hubSubscriber.CreateOrUpdatePushSubscriptionAsync(new PushSubscriptionRequest(_apnsDeviceToken, PushPlatformEnum.iOS, new[] {_testUserId}));
+            await _hubSubscriber.CreateOrUpdatePushSubscriptionAsync(new PushSubscriptionRequest(_apnsDeviceToken, PushPlatformEnum.iOS, new[] { _testUserId }));
             var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
             Assert.NotNull(registrations);
             Assert.Equal(_testUserId, registrations.First().Tags.First());
         }
-        
+
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task ShouldUnsubscribeUserFromPush()
         {
             await ShouldCreateRegistration();
-            
+
             await _hubSubscriber.UnsubscribeByTagAsync(_testUserId);
             var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
             Assert.NotNull(registrations);
             Assert.Empty(registrations);
         }
-        
+
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task ShouldUnsubscribeDeviceFromPush()
         {
             await ShouldCreateRegistration();
-            
+
             await _hubSubscriber.UnsubscribeDeviceAsync(_apnsDeviceToken);
             var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
             Assert.NotNull(registrations);
@@ -61,6 +64,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task ShouldGetRegistrationByTag()
         {
             await ShouldCreateRegistration();
@@ -73,36 +77,34 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task ShouldSendToSingleUserAsync()
         {
             await ShouldCreateRegistration();
-            
+
             await _hubSender.SendAsync(new CommentLikedPush
             {
                 Body = "Template Body",
                 Title = "Template Title",
             }, _testUserId);
-            
+
             await ShouldUnsubscribeUserFromPush();
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionIfMixedTypeNotification()
+        [Trait("Category", "Integration")]
+        public async Task ShouldSendTemplatedNotification()
         {
             await ShouldCreateRegistration();
 
-            var pushNotificationMessage = new CommentLikedPush
+            var pushNotificationMessage = new TemplatedArgsPush
             {
-                Body = "Template Body",
-                Title = "Template Title",
-                TitleLocalizationKey = "chat_CreateGroup",
-                BodyLocalizationKey = "chat_Invite",
+                Name = "Alex",
+                PostName = "BitcoinPost"
             };
 
             //act
-            var ex = await Assert.ThrowsAsync<ValidationException>(async () => await _hubSender.SendAsync(pushNotificationMessage, _testUserId));
-
-            Assert.IsType(typeof(ValidationException), ex);
+            await _hubSender.SendAsync(pushNotificationMessage, _testUserId);
 
             await ShouldUnsubscribeUserFromPush();
         }

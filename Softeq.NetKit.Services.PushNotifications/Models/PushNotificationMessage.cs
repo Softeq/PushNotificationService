@@ -32,5 +32,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Models
         {
             return JsonConvert.SerializeObject(this);
         }
+
+        protected internal virtual string FormatTitle() => Title;
+        protected internal virtual string FormatBody() => Body;
     }
 }
