@@ -7,7 +7,7 @@
     <Authors>Softeq Development Corp.</Authors>
     <Company>Softeq Development Corp.</Company>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <PackageId>SofteqSofteq.PushNotificationService</PackageId>
+    <PackageId>Softeq.PushNotificationService</PackageId>
     <Product>Softeq.PushNotificationService</Product>
     <PackageProjectUrl>https://github.com/Softeq/PushNotificationService</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Softeq/PushNotificationService/blob/master/LICENSE</PackageLicenseUrl>
