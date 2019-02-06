@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 using Softeq.NetKit.Services.PushNotifications.Models;
 
-namespace Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.Comment
+namespace Softeq.NetKit.Services.PushNotifications.Tests.Messages
 {
     public class CommentLikedPush : PushNotificationMessage
     {

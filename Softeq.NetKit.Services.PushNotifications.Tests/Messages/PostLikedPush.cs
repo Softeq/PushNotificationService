@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 using Softeq.NetKit.Services.PushNotifications.Models;
 
-namespace Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.Article
+namespace Softeq.NetKit.Services.PushNotifications.Tests.Messages
 {
     public class PostLikedPush : PushNotificationMessage
     {
@@ -16,6 +16,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests.NotificationTemplates.A
         {
             Title = "Post liked.";
             Body = "Someone liked your post. Check it out!";
+            TitleLocalizationKey = "post_liked_title";
+            BodyLocalizationKey = "post_liked_body";
             NotificationType = (int) PushNotificationType.PostLiked;
         }
     }
