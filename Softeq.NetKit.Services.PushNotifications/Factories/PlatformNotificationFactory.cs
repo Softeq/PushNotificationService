@@ -31,10 +31,10 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
 
         private static void ValidateParameters(PushNotificationMessage message)
         {
-            if (!string.IsNullOrWhiteSpace(message.BodyLocalizationKey) &&
-                !string.IsNullOrWhiteSpace(message.TitleLocalizationKey) &&
-                !string.IsNullOrWhiteSpace(message.Body) &&
-                !string.IsNullOrWhiteSpace(message.Title))
+            if (string.IsNullOrWhiteSpace(message.BodyLocalizationKey) &&
+                string.IsNullOrWhiteSpace(message.TitleLocalizationKey) &&
+                string.IsNullOrWhiteSpace(message.Body) &&
+                string.IsNullOrWhiteSpace(message.Title))
             {
                 throw new ValidationException("Push notification message is missing the content.");
             }
@@ -80,15 +80,15 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
                 }
             }
 
-            properties.Add("body_loc_args", GetLocalizedArgsContent(bodyArgValues));
-            properties.Add("title_loc_args", GetLocalizedArgsContent(titleArgValues));
-        }
+            foreach (var arg in bodyArgValues.OrderBy(x => x.Position))
+            {
+                properties.Add($"body_loc_arg{arg.Position}", arg.Value);
+            }
 
-        private static string GetLocalizedArgsContent(IList<MessageAttributeValue> attrs)
-        {
-            return attrs.Count == 0 
-                ? null 
-                : string.Join(",", attrs.OrderBy(x => x.Position).Select(x => "\"" + x.Value + "\""));
+            foreach (var arg in titleArgValues.OrderBy(x => x.Position))
+            {
+                properties.Add($"title_loc_arg{arg.Position}", arg.Value);
+            }
         }
 
         private readonly struct MessageAttributeValue
