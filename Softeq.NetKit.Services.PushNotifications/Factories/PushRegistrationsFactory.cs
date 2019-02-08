@@ -20,7 +20,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Factories
                 case PushPlatformEnum.iOS:
                     return new AppleTemplateRegistrationDescription(subscription.DeviceHandle, iOSTemplate, new HashSet<string>(subscription.Tags));
                 case PushPlatformEnum.Android:
-                    return new GcmTemplateRegistrationDescription(subscription.DeviceHandle, androidTemplate, new HashSet<string>(subscription.Tags));
+                    return new FcmTemplateRegistrationDescription(subscription.DeviceHandle, androidTemplate, new HashSet<string>(subscription.Tags));
                 default:
                     throw new NotSupportedException($"Unsupported platform '{subscription.Platform}'");
             }

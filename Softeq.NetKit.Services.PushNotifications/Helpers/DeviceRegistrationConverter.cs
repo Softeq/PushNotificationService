@@ -21,28 +21,30 @@ namespace Softeq.NetKit.Services.PushNotifications.Helpers
             {
                 Tags = new List<string>(description.Tags),
                 RegistrationId = description.RegistrationId,
-                Platform = platform
+                Platform = platform,
+                PnsHandle = RetrieveDeviceHandle(platform, description)
             };
 
+            return deviceRegistration;
+        }
+
+        private static string RetrieveDeviceHandle(PushPlatformEnum platform, RegistrationDescription description)
+        {
             switch (platform)
             {
                 case PushPlatformEnum.iOS:
                 {
-                    deviceRegistration.PnsHandle = ((AppleTemplateRegistrationDescription)description).DeviceToken;
-                    break;
+                    return ((AppleTemplateRegistrationDescription)description).DeviceToken;
                 }
                 case PushPlatformEnum.Android:
                 {
-                    deviceRegistration.PnsHandle = ((GcmTemplateRegistrationDescription)description).GcmRegistrationId;
-                    break;
+                    return ((FcmTemplateRegistrationDescription)description).FcmRegistrationId;
                 }
                 default:
                 {
                     return null;
                 }
             }
-
-            return deviceRegistration;
         }
     }
 }
