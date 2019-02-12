@@ -2,7 +2,6 @@
 // http://www.softeq.com
 
 using Softeq.NetKit.Services.PushNotifications.Client;
-using Softeq.NetKit.Services.PushNotifications.Exception;
 using Softeq.NetKit.Services.PushNotifications.Models;
 using Softeq.NetKit.Services.PushNotifications.Tests.Messages;
 using System.Linq;
@@ -11,30 +10,28 @@ using Xunit;
 
 namespace Softeq.NetKit.Services.PushNotifications.Tests
 {
-    public class NotificationHubRegistrationIntegrationTest
+    public class NotificationHubRegistrationIntegrationTest : IClassFixture<ServiceTestFixture>
     {
-        private const string _connectionString = "INSERT_CONN_STR";
-        private const string _hubName = "INSERT_HUB_NAME";
-        private const string _testUserId = "test@test.test";
-        private const string _apnsDeviceToken = "INSERT_TOKEN";
-
+        private readonly string _testUserId = "test@test.test";
+        private readonly ServiceTestFixture _fixture;
         private readonly AzureNotificationHubSender _hubSender;
         private readonly AzureNotificationHubSubscriber _hubSubscriber;
         private readonly Microsoft.Azure.NotificationHubs.NotificationHubClient _nativeHub;
 
-        public NotificationHubRegistrationIntegrationTest()
+        public NotificationHubRegistrationIntegrationTest(ServiceTestFixture fixture)
         {
-            _hubSender = new AzureNotificationHubSender(new AzureNotificationHubConfiguration(_connectionString, _hubName));
-            _hubSubscriber = new AzureNotificationHubSubscriber(new AzureNotificationHubConfiguration(_connectionString, _hubName));
-            _nativeHub = Microsoft.Azure.NotificationHubs.NotificationHubClient.CreateClientFromConnectionString(_connectionString, _hubName);
+            _fixture = fixture;
+            _hubSender = new AzureNotificationHubSender(_fixture.HubConfig);
+            _hubSubscriber = new AzureNotificationHubSubscriber(_fixture.HubConfig);
+            _nativeHub = Microsoft.Azure.NotificationHubs.NotificationHubClient.CreateClientFromConnectionString(_fixture.HubConfig.ConnectionString, _fixture.HubConfig.HubName);
         }
 
         [Fact]
         [Trait("Category", "Integration")]
         public async Task ShouldCreateRegistration()
         {
-            await _hubSubscriber.CreateOrUpdatePushSubscriptionAsync(new PushSubscriptionRequest(_apnsDeviceToken, PushPlatformEnum.iOS, new[] { _testUserId }));
-            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
+            await _hubSubscriber.CreateOrUpdatePushSubscriptionAsync(new PushSubscriptionRequest(_fixture.ApnsDeviceToken, PushPlatformEnum.iOS, new[] { _testUserId }));
+            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_fixture.ApnsDeviceToken, 100);
             Assert.NotNull(registrations);
             Assert.Equal(_testUserId, registrations.First().Tags.First());
         }
@@ -46,7 +43,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
             await ShouldCreateRegistration();
 
             await _hubSubscriber.UnsubscribeByTagAsync(_testUserId);
-            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
+            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_fixture.ApnsDeviceToken, 100);
             Assert.NotNull(registrations);
             Assert.Empty(registrations);
         }
@@ -57,8 +54,8 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
         {
             await ShouldCreateRegistration();
 
-            await _hubSubscriber.UnsubscribeDeviceAsync(_apnsDeviceToken);
-            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
+            await _hubSubscriber.UnsubscribeDeviceAsync(_fixture.ApnsDeviceToken);
+            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_fixture.ApnsDeviceToken, 100);
             Assert.NotNull(registrations);
             Assert.Empty(registrations);
         }
@@ -71,7 +68,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Tests
 
             var existingRegistrations = await _hubSubscriber.GetRegistrationsByTagAsync(_testUserId);
 
-            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_apnsDeviceToken, 100);
+            var registrations = await _nativeHub.GetRegistrationsByChannelAsync(_fixture.ApnsDeviceToken, 100);
             Assert.NotNull(registrations);
             Assert.True(registrations.Count() == existingRegistrations.Count());
         }
