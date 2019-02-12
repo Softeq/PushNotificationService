@@ -1,3 +1,6 @@
+![NuGet](https://img.shields.io/nuget/v/Softeq.PushNotificationService.svg)
+![Azure DevOps builds](https://img.shields.io/azure-devops/build/SofteqDevelopment/NetKit/17.svg)
+
 # Softeq.NetKit.Services.PushNotifications
 
 Softeq.NetKit.Services.PushNotifications component simplifies the process of bringing support for Push notificaitons to your project. It's build around Azure Notification Hub and supports the following push notification platforms:
