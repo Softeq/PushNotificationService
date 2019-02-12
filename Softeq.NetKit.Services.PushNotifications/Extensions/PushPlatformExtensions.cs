@@ -15,7 +15,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Extensions
                 case AppleRegistrationDescription a:
                     platform = PushPlatformEnum.iOS;
                     return true;
-                case GcmRegistrationDescription g:
+                case FcmRegistrationDescription g:
                     platform = PushPlatformEnum.Android;
                     return true;
                 default:
