@@ -1,5 +1,5 @@
+![Azure DevOps builds](https://dev.azure.com/SofteqDevelopment/NetKit/_apis/build/status/PNS/PNS-CI-Build)
 ![NuGet](https://img.shields.io/nuget/v/Softeq.PushNotificationService.svg)
-![Azure DevOps builds](https://img.shields.io/azure-devops/build/SofteqDevelopment/NetKit/17.svg)
 
 # Softeq.NetKit.Services.PushNotifications
 
@@ -74,10 +74,10 @@ Softeq.NetKit.Services.PushNotifications comes with ```PushNotificationMessage``
 
         [JsonIgnore]
         public int Badge { get; set; } = 0;
-        
+
         [JsonIgnore]
         public string Sound { get; set; } = "default";
-        
+
         public virtual string GetData()
         {
             return JsonConvert.SerializeObject(this);
@@ -149,9 +149,13 @@ Inject ```IPushNotificationSender``` into your service to send push notification
 
 ## About
 
-This project is maintained by Softeq Development Corp.
-
+This project is maintained by [Softeq Development Corp.](https://www.softeq.com/)
 We specialize in .NET core applications.
+
+ - [Facebook](https://web.facebook.com/Softeq.by/)
+ - [Instagram](https://www.instagram.com/softeq/)
+ - [Twitter](https://twitter.com/Softeq)
+ - [Vk](https://vk.com/club21079655).
 
 ## Contributing
 
