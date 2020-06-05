@@ -29,23 +29,22 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         {
             Ensure.That(request, nameof(request)).IsNotNull();
 
-            var registrations = await GetRegistrationsForDevice(request.DeviceHandle);
-            await DeleteRegistrations(registrations);
+            await DeleteRegistrationsForDeviceAsync(request.DeviceHandle);
             await CreateRegistrationAsync(request);
         }
 
         public async Task UnsubscribeDeviceAsync(string deviceHandle)
         {
             Ensure.That(deviceHandle, nameof(deviceHandle)).IsNotNullOrWhiteSpace();
-            var registrations = await GetRegistrationsForDevice(deviceHandle);
-            await DeleteRegistrations(registrations);
+
+            await DeleteRegistrationsForDeviceAsync(deviceHandle);
         }
 
         public async Task UnsubscribeByTagAsync(string tag)
         {
             Ensure.That(tag, nameof(tag)).IsNotNullOrWhiteSpace();
 
-            var registrations = await GetRegistrationsForTag(tag);
+            var registrations = await GetRegistrationsForTagAsync(tag);
             try
             {
                 foreach (var registration in registrations)
@@ -62,7 +61,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public async Task<IEnumerable<DeviceRegistration>> GetRegistrationsByTagAsync(string tag)
         {
             Ensure.That(tag, nameof(tag)).IsNotNullOrWhiteSpace();
-            var registrations = await GetRegistrationsForTag(tag);
+            var registrations = await GetRegistrationsForTagAsync(tag);
             return registrations.Select(DeviceRegistrationConverter.Convert).Where(x => x != null).ToList();
         }
 
@@ -80,22 +79,19 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
             }
         }
 
-        private async Task DeleteRegistrations(IEnumerable<RegistrationDescription> registrations)
+        private async Task DeleteRegistrationsForDeviceAsync(string pnsHandle)
         {
             try
             {
-                foreach (var registration in registrations)
-                {
-                    await _hub.DeleteRegistrationAsync(registration);
-                }
+                await _hub.DeleteRegistrationsByChannelAsync(pnsHandle);
             }
             catch (MessagingException ex)
             {
-                throw new PushNotificationException("Something went wrong during deleting token request", ex);
+                throw new PushNotificationException($"Something went wrong during deleting registrations for device handle: '{pnsHandle}'.", ex);
             }
         }
 
-        private async Task<IEnumerable<RegistrationDescription>> GetRegistrationsForTag(string tagValue)
+        private async Task<IEnumerable<RegistrationDescription>> GetRegistrationsForTagAsync(string tagValue)
         {
             try
             {
@@ -106,30 +102,6 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
                 do
                 {
                     var registrations = await _hub.GetRegistrationsByTagAsync(tagValue, continuationToken, pageSize);
-                    allRegistrationDescriptions.AddRange(registrations);
-                    continuationToken = registrations.ContinuationToken;
-
-                } while (!string.IsNullOrWhiteSpace(continuationToken));
-
-                return allRegistrationDescriptions;
-            }
-            catch (MessagingException ex)
-            {
-                throw new PushNotificationException("Something went wrong while retrieving device registration list", ex);
-            }
-        }
-
-        private async Task<IEnumerable<RegistrationDescription>> GetRegistrationsForDevice(string pnsValue)
-        {
-            try
-            {
-                const int pageSize = 100;
-                var allRegistrationDescriptions = new List<RegistrationDescription>();
-                string continuationToken = string.Empty;
-
-                do
-                {
-                    var registrations = await _hub.GetRegistrationsByChannelAsync(pnsValue, continuationToken, pageSize);
                     allRegistrationDescriptions.AddRange(registrations);
                     continuationToken = registrations.ContinuationToken;
 
