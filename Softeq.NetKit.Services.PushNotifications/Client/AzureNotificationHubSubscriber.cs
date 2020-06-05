@@ -81,13 +81,25 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
 
         private async Task DeleteRegistrationsForDeviceAsync(string pnsHandle)
         {
-            try
+            var isDeleted = false;
+            while (!isDeleted)
             {
-                await _hub.DeleteRegistrationsByChannelAsync(pnsHandle);
-            }
-            catch (MessagingException ex)
-            {
-                throw new PushNotificationException($"Something went wrong during deleting registrations for device handle: '{pnsHandle}'.", ex);
+                try
+                {
+                    await _hub.DeleteRegistrationsByChannelAsync(pnsHandle);
+                    isDeleted = true;
+                }
+                catch (MessagingEntityNotFoundException)
+                {
+                    // Intentionally doing nothing here
+                    // Internally, Azure SDK will delete registrations concurrently with Task.WhenAll.
+                    // If at least one deletion fails (e.g. due to a race condition with other delete operation, 404 response is returned),
+                    // we need to retry to ensure everything is deleted
+                }
+                catch (MessagingException ex)
+                {
+                    throw new PushNotificationException($"Something went wrong during deleting registrations for device handle: '{pnsHandle}'.", ex);
+                }
             }
         }
 
