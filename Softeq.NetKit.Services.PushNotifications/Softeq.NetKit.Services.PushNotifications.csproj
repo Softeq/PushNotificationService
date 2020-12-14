@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <Description></Description>
     <Authors>Softeq Development Corp.</Authors>
     <Company>Softeq Development Corp.</Company>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
     <PackageId>Softeq.PushNotificationService</PackageId>
     <Product>Softeq.PushNotificationService</Product>
     <PackageProjectUrl>https://github.com/Softeq/PushNotificationService</PackageProjectUrl>
@@ -16,7 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Ensure.That" Version="8.1.1" />
-    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="3.3.0" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.1.0" />
+    <PackageReference Include="Polly" Version="7.2.1" />
   </ItemGroup>
 
 </Project>
