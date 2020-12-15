@@ -21,10 +21,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public AzureNotificationHubSender(AzureNotificationHubConfiguration configuration)
         {
             Ensure.That(configuration, nameof(configuration)).IsNotNull();
-            _hub = new NotificationHubClient(configuration.ConnectionString, configuration.HubName, new NotificationHubSettings
-            {
-                RetryOptions = configuration.NotificationHubRetryOptions
-            });
+            _hub = new NotificationHubClient(configuration.ConnectionString, configuration.HubName, configuration.NotificationHubSettings);
         }
 
         public Task<bool> SendAsync(PushNotificationMessage message, string tag)

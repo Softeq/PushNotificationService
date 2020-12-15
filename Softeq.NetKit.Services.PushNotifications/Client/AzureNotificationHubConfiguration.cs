@@ -11,17 +11,17 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public AzureNotificationHubConfiguration(
             string connectionString,
             string hubName,
-            NotificationHubRetryOptions notificationHubRetryOptions = null)
+            NotificationHubSettings notificationHubSettings = null)
         {
             ConnectionString = Ensure.String.IsNotNullOrWhiteSpace(connectionString, nameof(connectionString));
             HubName = Ensure.String.IsNotNullOrWhiteSpace(hubName, nameof(hubName));
-            NotificationHubRetryOptions = notificationHubRetryOptions ?? new NotificationHubRetryOptions();
+            NotificationHubSettings = notificationHubSettings ?? new NotificationHubSettings();
         }
 
         public string ConnectionString { get; }
 
         public string HubName { get; }
 
-        public NotificationHubRetryOptions NotificationHubRetryOptions { get; }
+        public NotificationHubSettings NotificationHubSettings { get; }
     }
 }
