@@ -1,6 +1,8 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using EnsureThat;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.NotificationHubs.Messaging;
@@ -9,31 +11,20 @@ using Softeq.NetKit.Services.PushNotifications.Exception;
 using Softeq.NetKit.Services.PushNotifications.Factories;
 using Softeq.NetKit.Services.PushNotifications.Helpers;
 using Softeq.NetKit.Services.PushNotifications.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Polly;
-using Softeq.NetKit.Services.PushNotifications.Extensions;
 
 namespace Softeq.NetKit.Services.PushNotifications.Client
 {
     public class AzureNotificationHubSender : IPushNotificationSender
     {
         private readonly NotificationHubClient _hub;
-        private readonly IAsyncPolicy _retryPolicy;
 
         public AzureNotificationHubSender(AzureNotificationHubConfiguration configuration)
         {
             Ensure.That(configuration, nameof(configuration)).IsNotNull();
-            _hub = NotificationHubClient.CreateClientFromConnectionString(configuration.ConnectionString, configuration.HubName);
-            if (configuration.TransientErrorRetryDelays != null)
+            _hub = new NotificationHubClient(configuration.ConnectionString, configuration.HubName, new NotificationHubSettings
             {
-                _retryPolicy = Policy.Handle<System.Exception>(ex => ex.IsTransient())
-                    .WaitAndRetryAsync(configuration.TransientErrorRetryDelays);
-            }
-            else
-            {
-                _retryPolicy = Policy.NoOpAsync();
-            }
+                RetryOptions = configuration.NotificationHubRetryOptions
+            });
         }
 
         public Task<bool> SendAsync(PushNotificationMessage message, string tag)
@@ -59,7 +50,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
 
             try
             {
-                var outcome = await _retryPolicy.ExecuteAsync(() => _hub.SendTemplateNotificationAsync(notification, tagExpression));
+                var outcome = await _hub.SendTemplateNotificationAsync(notification, tagExpression);
                 if (outcome == null)
                 {
                     return false;

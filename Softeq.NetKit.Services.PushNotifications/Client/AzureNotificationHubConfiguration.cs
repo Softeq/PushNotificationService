@@ -1,8 +1,8 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
-using System;
 using EnsureThat;
+using Microsoft.Azure.NotificationHubs;
 
 namespace Softeq.NetKit.Services.PushNotifications.Client
 {
@@ -11,20 +11,17 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public AzureNotificationHubConfiguration(
             string connectionString,
             string hubName,
-            TimeSpan[] transientErrorRetryDelays = null)
+            NotificationHubRetryOptions notificationHubRetryOptions = null)
         {
             ConnectionString = Ensure.String.IsNotNullOrWhiteSpace(connectionString, nameof(connectionString));
             HubName = Ensure.String.IsNotNullOrWhiteSpace(hubName, nameof(hubName));
-            if (TransientErrorRetryDelays != null)
-            {
-                TransientErrorRetryDelays = Ensure.Collection.HasItems(transientErrorRetryDelays, nameof(transientErrorRetryDelays));
-            }
+            NotificationHubRetryOptions = notificationHubRetryOptions ?? new NotificationHubRetryOptions();
         }
 
         public string ConnectionString { get; }
 
         public string HubName { get; }
 
-        public TimeSpan[] TransientErrorRetryDelays { get; }
+        public NotificationHubRetryOptions NotificationHubRetryOptions { get; }
     }
 }

@@ -1,40 +1,31 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EnsureThat;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.NotificationHubs.Messaging;
 using Softeq.NetKit.Services.PushNotifications.Abstractions;
 using Softeq.NetKit.Services.PushNotifications.Exception;
 using Softeq.NetKit.Services.PushNotifications.Factories;
-using Softeq.NetKit.Services.PushNotifications.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Polly;
-using Softeq.NetKit.Services.PushNotifications.Extensions;
 using Softeq.NetKit.Services.PushNotifications.Helpers;
+using Softeq.NetKit.Services.PushNotifications.Models;
 
 namespace Softeq.NetKit.Services.PushNotifications.Client
 {
     public class AzureNotificationHubSubscriber : IPushNotificationSubscriber
     {
         private readonly NotificationHubClient _hub;
-        private readonly IAsyncPolicy _retryPolicy;
 
         public AzureNotificationHubSubscriber(AzureNotificationHubConfiguration configuration)
         {
             Ensure.That(configuration, nameof(configuration)).IsNotNull();
-            _hub = NotificationHubClient.CreateClientFromConnectionString(configuration.ConnectionString, configuration.HubName);
-            if (configuration.TransientErrorRetryDelays != null)
+            _hub = new NotificationHubClient(configuration.ConnectionString, configuration.HubName, new NotificationHubSettings
             {
-                _retryPolicy = Policy.Handle<System.Exception>(ex => ex.IsTransient())
-                    .WaitAndRetryAsync(configuration.TransientErrorRetryDelays);
-            }
-            else
-            {
-                _retryPolicy = Policy.NoOpAsync();
-            }
+                RetryOptions = configuration.NotificationHubRetryOptions
+            });
         }
 
         public async Task CreateOrUpdatePushSubscriptionAsync(PushSubscriptionRequest request)
@@ -61,7 +52,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
             {
                 foreach (var registration in registrations)
                 {
-                    await _retryPolicy.ExecuteAsync(() => _hub.DeleteRegistrationAsync(registration));
+                    await _hub.DeleteRegistrationAsync(registration);
                 }
             }
             catch (MessagingException ex)
@@ -83,7 +74,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
 
             try
             {
-                await _retryPolicy.ExecuteAsync(() => _hub.CreateRegistrationAsync(registration));
+                await _hub.CreateRegistrationAsync(registration);
             }
             catch (MessagingException e)
             {
@@ -98,7 +89,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
             {
                 try
                 {
-                    await _retryPolicy.ExecuteAsync(() => _hub.DeleteRegistrationsByChannelAsync(pnsHandle));
+                    await _hub.DeleteRegistrationsByChannelAsync(pnsHandle);
                     isDeleted = true;
                 }
                 catch (MessagingEntityNotFoundException)
@@ -125,7 +116,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
 
                 do
                 {
-                    var registrations = await _retryPolicy.ExecuteAsync(() => _hub.GetRegistrationsByTagAsync(tagValue, continuationToken, pageSize));
+                    var registrations = await _hub.GetRegistrationsByTagAsync(tagValue, continuationToken, pageSize);
                     allRegistrationDescriptions.AddRange(registrations);
                     continuationToken = registrations.ContinuationToken;
 
