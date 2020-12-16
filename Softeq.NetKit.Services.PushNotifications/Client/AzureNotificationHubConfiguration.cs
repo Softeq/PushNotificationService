@@ -2,21 +2,26 @@
 // http://www.softeq.com
 
 using EnsureThat;
+using Microsoft.Azure.NotificationHubs;
 
 namespace Softeq.NetKit.Services.PushNotifications.Client
 {
     public class AzureNotificationHubConfiguration
     {
-        public AzureNotificationHubConfiguration(string connectionString, string hubName)
+        public AzureNotificationHubConfiguration(
+            string connectionString,
+            string hubName,
+            NotificationHubSettings notificationHubSettings = null)
         {
-            Ensure.That(connectionString, nameof(connectionString)).IsNotNullOrWhiteSpace();
-            Ensure.That(hubName, nameof(hubName)).IsNotNullOrWhiteSpace();
-
-            ConnectionString = connectionString;
-            HubName = hubName;
+            ConnectionString = Ensure.String.IsNotNullOrWhiteSpace(connectionString, nameof(connectionString));
+            HubName = Ensure.String.IsNotNullOrWhiteSpace(hubName, nameof(hubName));
+            NotificationHubSettings = notificationHubSettings ?? new NotificationHubSettings();
         }
 
         public string ConnectionString { get; }
+
         public string HubName { get; }
+
+        public NotificationHubSettings NotificationHubSettings { get; }
     }
 }

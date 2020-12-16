@@ -1,6 +1,8 @@
 ﻿// Developed by Softeq Development Corporation
 // http://www.softeq.com
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using EnsureThat;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.NotificationHubs.Messaging;
@@ -9,8 +11,6 @@ using Softeq.NetKit.Services.PushNotifications.Exception;
 using Softeq.NetKit.Services.PushNotifications.Factories;
 using Softeq.NetKit.Services.PushNotifications.Helpers;
 using Softeq.NetKit.Services.PushNotifications.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Softeq.NetKit.Services.PushNotifications.Client
 {
@@ -21,7 +21,7 @@ namespace Softeq.NetKit.Services.PushNotifications.Client
         public AzureNotificationHubSender(AzureNotificationHubConfiguration configuration)
         {
             Ensure.That(configuration, nameof(configuration)).IsNotNull();
-            _hub = NotificationHubClient.CreateClientFromConnectionString(configuration.ConnectionString, configuration.HubName);
+            _hub = new NotificationHubClient(configuration.ConnectionString, configuration.HubName, configuration.NotificationHubSettings);
         }
 
         public Task<bool> SendAsync(PushNotificationMessage message, string tag)
